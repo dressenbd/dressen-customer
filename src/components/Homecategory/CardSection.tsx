@@ -37,7 +37,7 @@ export default function Home() {
                         Start Selling In 4 Simple Steps
                     </h1>
                     <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg">
-                        Launching your online business with MegaMart is a breeze. Join the 10 million sellers who already trust us
+                        Launching your online business with Dressen is a breeze. Join the 10 million sellers who already trust us
                         with their success.
                     </p>
                 </div>

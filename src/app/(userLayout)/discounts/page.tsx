@@ -44,7 +44,7 @@ export default function DiscountsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const { data: paginatedData, isLoading, isFetching } = useGetPaginatedProductsQuery({ 
     page: currentPage, 
-    limit: 10 
+    limit: 20 
   });
   const { data: apiCategories } = useGetAllCategoryQuery();
   

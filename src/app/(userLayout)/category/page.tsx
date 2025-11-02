@@ -19,6 +19,7 @@ export default function CategorySection() {
   const { data: discountedData, isLoading: discountLoading, isError: discountError } = useGetDiscountedProductsQuery();
   const searchParams = useSearchParams();
   const categorySlug = searchParams.get('slug');
+  const subCategoryName = searchParams.get('sub');
 
   // Find the selected category
   const selectedCategory = useMemo(() => {
@@ -30,19 +31,28 @@ export default function CategorySection() {
     );
   }, [categorySlug, categoryData]);
 
-  // Filter products by category
+  // Filter products by category and subcategory
   const categoryProducts = useMemo(() => {
     if (!data || !selectedCategory) return data;
     
     return data.filter((product: IProduct) => {
       const productCategories = product.brandAndCategories?.categories || [];
-      return productCategories.some((cat: Record<string, unknown>) => 
+      const matchesCategory = productCategories.some((cat: Record<string, unknown>) =>  
         cat._id === selectedCategory._id ||
         cat.slug === selectedCategory.slug ||
         cat.name === selectedCategory.name
       );
+        
+      // If no subcategory specified, return all products in the category
+      if (!subCategoryName) return matchesCategory;
+      
+      // If subcategory specified, check if product matches the subcategory
+      const productSubCategory = product.brandAndCategories?.subcategory;
+      const matchesSubCategory = productSubCategory === subCategoryName;
+      
+      return matchesCategory && matchesSubCategory;
     });
-  }, [data, selectedCategory]);
+   }, [data, selectedCategory, subCategoryName]);
 
   // ✅ Proper transformation with type safety
   const normalized: ProductData[] | undefined = Array.isArray(categoryProducts)
@@ -166,11 +176,11 @@ const isIProduct = (item: unknown): item is IProduct => {
         {/* Left Content */}
         <div className="flex-1 max-w-lg space-y-4">
           <Badge className="px-4 py-2 rounded-full bg-primary text-[#2e2e2e] w-fit">
-            ● {selectedCategory?.name || 'Category'}
+            ● {subCategoryName || selectedCategory?.name || 'Category'}
           </Badge>
 
           <h2 className="text-sm sm:text-2xl md:text-4xl font-bold leading-snug">
-            {selectedCategory?.name || 'Category'} <br /> Collection
+            {subCategoryName || selectedCategory?.name || 'Category'} <br /> Collection
           </h2>
 
           <p className="text-gray-600 text-[10px] sm:text-base md:text-lg leading-relaxed">
@@ -190,8 +200,8 @@ const isIProduct = (item: unknown): item is IProduct => {
         </div>
       </section>
 
-      <BestSelling data={normalized} title={`Best Selling ${selectedCategory?.name || 'Products'}`} />
-      <CategoryProduct data={normalized} title={`${selectedCategory?.name || ''} Products`} />
+      <BestSelling data={normalized} title={`Best Selling ${subCategoryName || selectedCategory?.name || 'Products'}`} />
+      <CategoryProduct data={normalized} title={`${subCategoryName || selectedCategory?.name || ''} Products`} />
       <Discount 
         data={discountedData}
         loading={discountLoading}

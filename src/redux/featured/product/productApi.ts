@@ -131,7 +131,7 @@ export const productApi = baseApi.injectEndpoints({
     }),
 
     getPaginatedProducts: builder.query<PaginatedResponse<IProduct>, { page?: number; limit?: number; search?: string }>({
-      query: ({ page = 1, limit = 10, search }) => {
+      query: ({ page = 1, limit = 20, search }) => {
         const params = new URLSearchParams();
         params.append('page', page.toString());
         params.append('limit', limit.toString());
@@ -139,11 +139,10 @@ export const productApi = baseApi.injectEndpoints({
         return { url: `/product?${params.toString()}`, method: "GET" };
       },
       transformResponse: (res: BackendPaginatedResponse<IProduct>, meta, arg): PaginatedResponse<IProduct> => {
-        console.log('Raw API Response:', res);
-        
+
         // If no meta, create pagination based on data length and current page
         const currentPage = arg.page || 1;
-        const limit = arg.limit || 10;
+        const limit = arg.limit || 20;
         const dataLength = res.data?.length || 0;
         
         return {

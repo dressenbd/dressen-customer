@@ -47,6 +47,7 @@ export interface IProduct {
     brand: string | { name: string }; // Both string and object supported
     categories: Array<{ name: string }>;
     tags: Array<{ name: string }>;
+    subcategory?: string;
   };
   description: {
     name: string;
@@ -97,6 +98,7 @@ export interface RemoteProduct {
     brand?: string | { name: string };
     categories?: Array<{ name: string }>;
     tags?: Array<{ name: string }>;
+    subcategory?: string;
   };
   specifications?: Array<{ key: string; value: string; _id?: string }>;
 }

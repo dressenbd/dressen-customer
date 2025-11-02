@@ -151,7 +151,7 @@ export default function DealsMorePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const { data: paginatedData, isLoading, isFetching } = useGetPaginatedProductsQuery({ 
     page: currentPage, 
-    limit: 10 
+    limit: 20 
   });
   const { data: categories } = useGetAllCategoryQuery();
   const [activeCat, setActiveCat] = useState<Category>("All");

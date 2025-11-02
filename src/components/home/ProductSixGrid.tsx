@@ -58,50 +58,7 @@ type Props = {
   fallback?: RemoteProduct[];
 };
 
-export const FALLBACK: RemoteProduct[] = [
-  {
-    _id: "5f1",
-    name: "Portable Chair",
-    image: "/new-arrival-1.png",
-    mrp: 1800,
-    offerPrice: 1500,
-  },
-  {
-    _id: "6f2",
-    name: "Summer T-Shirt",
-    image: "/new-arrival-2.png",
-    mrp: 900,
-    offerPrice: 700,
-  },
-  {
-    _id: "7f3",
-    name: "Casual Pants",
-    image: "/new-arrival-3.png",
-    mrp: 1450,
-    offerPrice: 1200,
-  },
-  {
-    _id: "8f4",
-    name: "Analog Watch",
-    image: "/new-arrival-4.png",
-    mrp: 2200,
-    offerPrice: 1800,
-  },
-  {
-    _id: "9f5",
-    name: "Smart Watch",
-    image: "/man-model.png",
-    mrp: 2800,
-    offerPrice: 2400,
-  },
-  {
-    _id: "10f6",
-    name: "Sneakers",
-    image: "/mens.png",
-    mrp: 3200,
-    offerPrice: 2700,
-  },
-];
+
 // Type guards to distinguish between IProduct and RemoteProduct
 const isIProduct = (p: RemoteProduct | IProduct): p is IProduct => {
   return "productInfo" in p && "description" in p;
@@ -254,7 +211,7 @@ const discountPct = (mrp?: number | null, sale?: number | null): number => {
 export default function ProductSixGrid({
   title = "Featured Deals",
   useQuery = () => useGetAllProductsQuery(),
-  fallback = FALLBACK,
+  fallback = [],
 }: Props) {
   const { data: fetched, isLoading, error } = useQuery();
 

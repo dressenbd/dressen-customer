@@ -36,7 +36,7 @@ export default function MonetizePage() {
             <div className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl">
               <Image
                 src={phone}
-                alt="Megamart Dashboard Interface showing mobile and desktop views"
+                alt="Dressen Dashboard Interface showing mobile and desktop views"
                 width={600}
                 height={400}
                 className="w-full h-auto rounded-lg shadow-lg"

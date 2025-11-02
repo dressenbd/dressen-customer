@@ -61,7 +61,7 @@ export default function HomepagePopup() {
           <p className="text-gray-600 mb-4">{settings.popupDescription}</p>
           <button
             onClick={handleClose}
-            className="w-full bg-orange-500 text-[#2e2e2e] py-2 px-4 rounded hover:bg-orange-600"
+            className="w-full bg-primary text-[#2e2e2e] py-2 px-4 rounded hover:bg-primary"
           >
             Got it!
           </button>

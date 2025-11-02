@@ -22,12 +22,6 @@ const FALLBACK: Slide[] = [
     alt: "Dressen Banner", 
     href: "/products/footwear" 
   },
-  { 
-    _id: "f2", 
-    imageUrl: "/about2.jpg",
-    alt: "Dressen Banner", 
-    href: "/products/new" 
-  },
 ];
 
 

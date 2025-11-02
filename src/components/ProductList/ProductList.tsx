@@ -31,107 +31,13 @@ interface Product {
 interface FilterState {
   // categories will store stable ids (slug or _id) to avoid matching on display names
   categories: string[];
-  brands: string[];
+  tags: string[]; // Changed from brands to tags
   priceRanges: string[];
   sizes: string[];
   colors: string[];
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Adidas Grey Men's T-shirt",
-    brand: "Adidas",
-    price: 40.0,
-    originalPrice: 50.0,
-    category: "Men",
-    size: ["Large", "XL", "Medium"],
-    colors: ["Grey"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 2,
-    name: "Manlac Red Boys",
-    brand: "Manlac",
-    price: 50.0,
-    originalPrice: 65.0,
-    category: "Kids",
-    size: ["Small", "Medium", "Large"],
-    colors: ["Red", "Multi-Color"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 3,
-    name: "Louise Vuitton Pure Black Shirt",
-    brand: "Louis Vuitton",
-    price: 30.0,
-    originalPrice: 45.0,
-    category: "Men",
-    size: ["Large", "XL"],
-    colors: ["Black"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 4,
-    name: "Manlac Red Boys",
-    brand: "Manlac",
-    price: 50.0,
-    category: "Kids",
-    size: ["Medium", "Large"],
-    colors: ["Red", "Multi-Color"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 5,
-    name: "Louise Vuitton Pure Black Shirt",
-    brand: "Louis Vuitton",
-    price: 30.0,
-    category: "Men",
-    size: ["Small", "Medium", "Large", "XL"],
-    colors: ["Black"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 6,
-    name: "Adidas Grey Men's T-shirt",
-    brand: "Adidas",
-    price: 40.0,
-    category: "Men",
-    size: ["Small", "Medium", "Large"],
-    colors: ["Grey"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 7,
-    name: "Louise Vuitton Pure Black Shirt",
-    brand: "Louis Vuitton",
-    price: 30.0,
-    category: "Men",
-    size: ["Small", "Medium", "Large"],
-    colors: ["Black"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 8,
-    name: "Adidas Grey Men's T-shirt",
-    brand: "Adidas",
-    price: 40.0,
-    category: "Men",
-    size: ["Small", "Medium", "Large"],
-    colors: ["Grey"],
-    image: "/placeholder.svg",
-  },
-  {
-    id: 9,
-    name: "Manlac Red Boys",
-    brand: "Manlac",
-    price: 50.0,
-    category: "Kids",
-    size: ["Small", "Medium", "Large"],
-    colors: ["Red", "Multi-Color"],
-    image: "/placeholder.svg",
-  },
-];
+
 
 const filterOptions = {
   // categories is a placeholder list used only when the categories API is not available.
@@ -160,7 +66,7 @@ const filterOptions = {
 
 const defaultFilters: FilterState = {
   categories: [],
-  brands: [],
+  tags: [], // Changed from brands to tags
   priceRanges: [],
   sizes: [],
   colors: [],
@@ -189,7 +95,7 @@ export default function ProductListing() {
   const [filters, setFilters] = useState<FilterState>({ ...defaultFilters })
   const [expandedSections, setExpandedSections] = useState({
     categories: true,
-    brands: false,
+    tags: false,
     priceRanges: false,
     sizes: false,
     colors: false,
@@ -206,8 +112,7 @@ export default function ProductListing() {
     isFetching,
   } = useGetPaginatedProductsQuery({ 
     page: currentPage, 
-    limit: 10,
-    search: searchQuery 
+    limit: 20 
   });
 
   const apiProducts = useMemo(() => {
@@ -215,12 +120,7 @@ export default function ProductListing() {
   }, [paginatedData?.data]);
   const hasNextPage = paginatedData?.pagination?.hasNextPage || false;
   const totalItems = paginatedData?.pagination?.totalItems || 0;
-  
-  // Debug logging
-  console.log('Paginated Data:', paginatedData);
-  console.log('API Products:', apiProducts);
-  console.log('Has Next Page:', hasNextPage);
-  console.log('Total Items:', totalItems);
+
   // categories from API
   const { data: apiCategories } = useGetAllCategoryQuery();
 
@@ -244,8 +144,7 @@ export default function ProductListing() {
 
   // map API products to local Product shape; use fallback if no API data
   const sourceProducts: Product[] = useMemo(() => {
-    if (!apiProducts?.length) return products; // Use fallback products if no API data
-
+    
     return apiProducts.map((prod: RemoteProduct) => {
       // create a local typed view for fields that are missing in RemoteProduct
       const p = prod as RemoteProduct & {
@@ -257,21 +156,8 @@ export default function ProductListing() {
         };
       };
 
-      // brand extraction: brand may be string or object, fall back to tags/categories
-      let brand = "";
-      const bRaw = p.brandAndCategories?.brand;
-      if (typeof bRaw === "string") brand = bRaw;
-      else if (
-        bRaw &&
-        typeof bRaw === "object" &&
-        typeof (bRaw as { name?: unknown }).name === "string"
-      )
-        brand = (bRaw as { name?: string }).name ?? "";
-      else
-        brand =
-          p.brandAndCategories?.tags?.[0]?.name ??
-          p.brandAndCategories?.categories?.[0]?.name ??
-          "";
+      // Extract tag as brand (first tag name)
+      const brand = p.brandAndCategories?.tags?.[0]?.name ?? "";
 
       // price logic: use salePrice if > 0, otherwise use regular price
       const salePrice = Number(p.productInfo?.salePrice ?? 0);
@@ -279,11 +165,20 @@ export default function ProductListing() {
       const price = salePrice > 0 ? salePrice : regularPrice;
       const originalPrice = salePrice > 0 ? regularPrice : undefined;
 
-      // colors: look into specifications for keys like 'color' or 'Color'
+      // Extract specifications
       const specs = Array.isArray(p.specifications) ? p.specifications : [];
+       
+      // colors: look into specifications for keys like 'color' or 'Color'
       const colors = specs
         .filter(
           (s) => typeof s?.key === "string" && /color/i.test(s.key) && s?.value
+        )
+        .map((s) => capitalize(s.value));
+          
+      // sizes: look into specifications for keys like 'size' or 'Size'
+      const sizes = specs
+        .filter(
+          (s) => typeof s?.key === "string" && /size/i.test(s.key) && s?.value
         )
         .map((s) => capitalize(s.value));
 
@@ -298,7 +193,7 @@ export default function ProductListing() {
           p.brandAndCategories?.categories && p.brandAndCategories.categories[0]
             ? stableCatId(p.brandAndCategories.categories[0])
             : "",
-        size: [],
+        size: sizes,
         colors,
         image: p.featuredImg ?? "/placeholder.svg",
       };
@@ -333,19 +228,23 @@ export default function ProductListing() {
 
   // derive dynamic filter options from actual product data
   const derivedFilters: {
-    brands: string[];
+    tags: string[];
     colors: string[];
+    sizes: string[];
     priceRanges: string[];
     getRange: (price: number) => string;
   } = useMemo(() => {
-    const brandsSet = new Set<string>();
+    const tagsSet = new Set<string>();
     const colorsSet = new Set<string>();
+    const sizesSet = new Set<string>();
     const prices: number[] = [];
 
     sourceProducts.forEach((p) => {
-      if (p.brand) brandsSet.add(p.brand);
+      if (p.brand) tagsSet.add(p.brand);
       if (Array.isArray(p.colors))
         p.colors.forEach((c) => c && colorsSet.add(capitalize(c)));
+      if (Array.isArray(p.size))
+        p.size.forEach((s) => s && sizesSet.add(capitalize(s)));
       if (typeof p.price === "number" && Number.isFinite(p.price))
         prices.push(p.price);
     });
@@ -371,8 +270,9 @@ export default function ProductListing() {
     };
 
     return {
-      brands: Array.from(brandsSet).sort(),
+      tags: Array.from(tagsSet).sort(),
       colors: Array.from(colorsSet).sort(),
+      sizes: Array.from(sizesSet).sort(),
       priceRanges: priceRangesFinal,
       getRange,
     };
@@ -382,7 +282,7 @@ export default function ProductListing() {
 
   const isAnyFilterActive =
     filters.categories.length +
-      filters.brands.length +
+      filters.tags.length +
       filters.priceRanges.length +
       filters.sizes.length +
       filters.colors.length >
@@ -410,19 +310,15 @@ export default function ProductListing() {
         ? [...prev[filterType], value]
         : prev[filterType].filter((item) => item !== value),
     }));
-    
-    // Reset to first page when filters change
-    setCurrentPage(1);
-  };
+ };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setCurrentPage(1);
+    // No need to reset page for client-side search
   };
 
   const clearAll = () => {
     setFilters({ ...defaultFilters });
-    setCurrentPage(1);
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
@@ -455,10 +351,39 @@ export default function ProductListing() {
     }));
   };
 
-  // removed old getPriceRange in favor of derivedFilters.getRange
+  // SmartSearch-like scoring function
+  const scoreProduct = (product: Product, query: string): number => {
+    const q = query.trim().toLowerCase();
+    if (!q) return 1; // No query means all products match
+
+    let score = 0;
+    let matched = false;
+
+    const name = product.name.toLowerCase();
+    if (name.startsWith(q)) {
+      score += 4;
+      matched = true;
+    } else if (name.includes(q)) {
+      score += 2;
+      matched = true;
+    }
+
+    if (product.brand) {
+      const brand = product.brand.toLowerCase();
+      if (brand.startsWith(q)) {
+        score += 2;
+        matched = true;
+      } else if (brand.includes(q)) {
+        score += 1;
+        matched = true;
+      }
+    }
+
+    return matched ? score : 0;
+  };
 
   const filteredProducts = useMemo(() => {
-    return sourceProducts.filter((product) => {
+    let products = sourceProducts.filter((product) => {
       // categories: tolerant match (product.category may be a name or id; selected values are ids)
       if (filters.categories.length > 0) {
         const candidates = new Set<string>();
@@ -472,7 +397,7 @@ export default function ProductListing() {
         if (!matchesCategory) return false;
       }
 
-      if (filters.brands.length > 0 && !filters.brands.includes(product.brand))
+      if (filters.tags.length > 0 && !filters.tags.includes(product.brand))
         return false;
       if (
         filters.priceRanges.length > 0 &&
@@ -491,7 +416,18 @@ export default function ProductListing() {
         return false;
       return true;
     });
-  }, [filters, sourceProducts, categoryNameToId, derivedFilters]);
+
+  // Apply search filtering with scoring
+    if (searchQuery.trim()) {
+      products = products
+        .map(product => ({ product, score: scoreProduct(product, searchQuery) }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.product);
+    }
+
+    return products;
+  }, [filters, sourceProducts, categoryNameToId, derivedFilters, searchQuery]);
 
   const FilterSection = ({
     title,
@@ -602,7 +538,7 @@ export default function ProductListing() {
               {isAnyFilterActive
                 ? `(${
                     filters.categories.length +
-                    filters.brands.length +
+                    filters.tags.length +
                     filters.priceRanges.length +
                     filters.sizes.length +
                     filters.colors.length
@@ -686,23 +622,27 @@ export default function ProductListing() {
               
               <FilterSection
                 title="Price"
-                items={derivedFilters.priceRanges}
+                items={
+                  derivedFilters.sizes.length
+                    ? derivedFilters.sizes
+                    : filterOptions.sizes
+                }
                 filterKey="priceRanges"
               />
-              {/* Size Filter - Commented for future use */}
+              
               <FilterSection
                 title="Size"
                 items={filterOptions.sizes}
                 filterKey="sizes"
               />
               <FilterSection
-                title="Brands"
+                title="Tags"
                 items={
-                  derivedFilters.brands.length
-                    ? derivedFilters.brands
+                  derivedFilters.tags.length
+                    ? derivedFilters.tags
                     : filterOptions.brands
                 }
-                filterKey="brands"
+                filterKey="tags"
               />
               <FilterSection
                 title="Colors"
@@ -925,17 +865,21 @@ export default function ProductListing() {
               />
               <FilterSection
                 title="Size"
-                items={filterOptions.sizes}
+                items={
+                  derivedFilters.sizes.length
+                    ? derivedFilters.sizes
+                    : filterOptions.sizes
+                }
                 filterKey="sizes"
               />
               <FilterSection
-                title="Brands"
+                title="Tags"
                 items={
-                  derivedFilters.brands.length
-                    ? derivedFilters.brands
+                   derivedFilters.tags.length
+                    ? derivedFilters.tags
                     : filterOptions.brands
                 }
-                filterKey="brands"
+                filterKey="tags"
               />
               <FilterSection
                 title="Colors"

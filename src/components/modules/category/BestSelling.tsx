@@ -38,10 +38,13 @@ export default function BestSelling({ data = [], title = "Best Selling" }: Props
   }, [data]);
 
   // কেবল "Best Selling" ট্যাগ-ওয়ালা আইটেম
-  const bestSelling = useMemo(
-    () => items.filter((p) => p.tags?.includes("Best Selling")),
-    [items]
-  );
+  const bestSelling = useMemo(() => {
+    const tagged = items.filter((p) => p.tags?.includes("Best Selling"));
+    if (tagged.length > 0) return tagged;
+    
+    // Fallback: show random products from available data
+    return items.slice().sort(() => Math.random() - 0.5).slice(0, 6);
+  }, [items]);
 
   // ইউনিক ক্যাটাগরি
   const categories = useMemo(() => {
@@ -148,7 +151,7 @@ export default function BestSelling({ data = [], title = "Best Selling" }: Props
         ) : (
           <div className="col-span-full py-12 text-center">
             <h3 className="mb-2 text-lg font-semibold text-gray-700">
-              No Best Selling Products Found
+              No Products Found
             </h3>
           </div>
         )}

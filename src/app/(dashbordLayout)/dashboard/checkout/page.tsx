@@ -376,12 +376,9 @@ export default function CheckoutPage() {
     const finalOrder = buildOrderPayload();
     if (!finalOrder) return;
     
-    console.log("Order payload:", JSON.stringify(finalOrder, null, 2));
-    
     try {
       setCreateOrderLoading(true);
       const response = await createOrder(finalOrder as any).unwrap();
-      console.log("Order response:", response);
       clearCarts();
       setCurrentStep(1);
       setAppliedCoupon(null);
