@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import ProductDetails from "@/components/product/ProductDetails";
 import { useGetSingleProductQuery } from "@/redux/featured/product/productApi";
 import { IProduct, RemoteProduct } from "@/types/product";
-import { FALLBACK } from "@/components/home/ProductSixGrid";
 
 // Normalize RemoteProduct to IProduct
 const normalizeProduct = (data: RemoteProduct): IProduct => {
@@ -126,10 +125,7 @@ export default function ProductDetailsPage() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id") || "";
 
-  // Check if id is a fallback ID
-  const isFallbackId = ["f1", "f2", "f3", "f4", "f5", "f6"].includes(id);
-  const fallbackProduct = isFallbackId ? FALLBACK.find((p) => p._id === id) : null;
-
+ 
   // Fetch product data for non-fallback IDs
   const { 
     data, 
@@ -137,7 +133,7 @@ export default function ProductDetailsPage() {
     error,
     isError 
   } = useGetSingleProductQuery(id, {
-    skip: !id || isFallbackId,
+    skip: !id ,
   });
 
 
@@ -154,11 +150,7 @@ export default function ProductDetailsPage() {
     );
   }
 
-  // Handle fallback product
-  if (isFallbackId && fallbackProduct) {
-    const normalizedFallbackProduct = normalizeProduct(fallbackProduct as RemoteProduct);
-    return <ProductDetails product={normalizedFallbackProduct} />;
-  }
+ 
   // Handle error state
   if (isError || error) {
     return (
