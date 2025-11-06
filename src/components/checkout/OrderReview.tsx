@@ -7,8 +7,7 @@ import { CartItem } from "@/redux/featured/cart/cartSlice";
 
 interface OrderReviewProps {
   formData: {
-    firstName: string;
-    lastName: string;
+    fullName: string;
     email: string;
     phone: string;
     address: string;
@@ -52,7 +51,7 @@ export default function OrderReview({
             Customer Information
           </h3>
           <div className="text-sm text-gray-600 space-y-1">
-            <p>{`${formData.firstName} ${formData.lastName}`}</p>
+            <p>{formData.fullName}</p>
             <p>{formData.email}</p>
             <p>{formData.address}</p>
             <p>{formData.phone}</p>

@@ -1,9 +1,11 @@
 "use client";
 
+
 import { useSearchParams } from "next/navigation";
 import ProductDetails from "@/components/product/ProductDetails";
 import { useGetSingleProductQuery } from "@/redux/featured/product/productApi";
 import { IProduct, RemoteProduct } from "@/types/product";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 // Normalize RemoteProduct to IProduct
 const normalizeProduct = (data: RemoteProduct): IProduct => {
@@ -122,10 +124,10 @@ function ProductError({ message }: { message: string }) {
 }
 
 export default function ProductDetailsPage() {
+  useScrollToTop();
   const searchParams = useSearchParams();
   const id = searchParams.get("id") || "";
 
- 
   // Fetch product data for non-fallback IDs
   const { 
     data, 

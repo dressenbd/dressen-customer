@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Badge } from "@/components/ui/badge";
 import CategoryProduct from "@/components/modules/category/CategoryProduct";
 import BestSelling from "@/components/modules/category/BestSelling";
@@ -14,6 +15,7 @@ import { useMemo } from "react";
 import type { IProduct, ProductData } from "@/types/product";
 
 export default function CategorySection() {
+  useScrollToTop();
   const { data } = useGetAllProductsQuery();
   const { data: categoryData } = useGetAllCategoryQuery();
   const { data: discountedData, isLoading: discountLoading, isError: discountError } = useGetDiscountedProductsQuery();

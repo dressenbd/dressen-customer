@@ -16,19 +16,33 @@
 
 // export default Providers;
 
-// src/lib/providers/index.tsx
 "use client";
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store } from "@/redux/store";
 import { Provider } from "react-redux";
 import AuthSyncProvider from "@/components/providers/AuthSyncProvider";
+import { useState } from 'react';
 
-const Providers = ({ children }: { children: React.ReactNode }) => (
-  <Provider store={store}>
-    <AuthSyncProvider>
-      {children}
-    </AuthSyncProvider>
-  </Provider>
-);
+const Providers = ({ children }: { children: React.ReactNode }) => {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1 minute
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <AuthSyncProvider>
+          {children}
+        </AuthSyncProvider>
+      </Provider>
+    </QueryClientProvider>
+  );
+};
 
 export default Providers;

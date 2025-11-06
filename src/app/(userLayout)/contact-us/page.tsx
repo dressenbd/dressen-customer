@@ -1,6 +1,7 @@
 "use client";
 
 import { Mail, MapPin, Phone, MessageCircle } from "lucide-react";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useGetSettingsQuery } from "@/redux/featured/settings/settingsApi";
 
 export default function ContactUs() {
+  useScrollToTop();
   const { data: settings, isLoading } = useGetSettingsQuery();
   const contactInfo = settings?.contactAndSocial;
   if (isLoading) {
@@ -16,7 +18,7 @@ export default function ContactUs() {
   }
 
   return (
-    <div className="p-4 md:p-8 lg:p-16 mx-auto max-w-7xl">
+    <div className="p-2 md:p-6 lg:p-12 mx-auto max-w-7xl">
       <div className="pointer-events-none absolute -top-24 left-1/2 lg:h-[600px] h-[300px] lg:w-[900px] w-[400px] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,#9747FF80_0%,#9747FF80_50%,#FFCC0080_50%,#FFCC0080_100%)] blur-3xl opacity-20" />
       {/* ===== div2 ===== */}
       <div className="text-center overflow-hidden mb-20 relative">
@@ -39,7 +41,7 @@ export default function ContactUs() {
             height={650}
             className="object-cover rounded-xl w-full h-[400px] lg:h-[500px]"
           />
-          <Card className="absolute top-28 left-4  md:left-18 w-[300px] rounded-2xl p-6 bg-white/80 backdrop-blur-md border border-white/30 shadow-xl">
+          <Card className="absolute top-8 sm:top-12 md:top-8 lg:top-24 left-4 sm:left-4 md:left-8 lg:left-18 w-[260px] sm:w-[300px] rounded-2xl p-4 sm:p-6 bg-white/80 backdrop-blur-xl border border-white/30 shadow-xl">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-center text-black">
                 Come See Us

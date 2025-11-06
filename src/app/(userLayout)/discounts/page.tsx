@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,6 +40,7 @@ function discountPct(price: number, oldPrice: number) {
 }
 
 export default function DiscountsPage() {
+  useScrollToTop();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(selectCartItems);
   const [currentPage, setCurrentPage] = useState(1);

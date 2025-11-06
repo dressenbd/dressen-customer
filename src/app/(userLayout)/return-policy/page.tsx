@@ -3,8 +3,10 @@
 import { useGetSettingsQuery } from "@/redux/featured/settings/settingsApi";
 import { Shield, Clock, CheckCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 export default function ReturnPolicyPage() {
+  useScrollToTop();
   const { data: settings, isLoading } = useGetSettingsQuery();
 
   if (isLoading) {

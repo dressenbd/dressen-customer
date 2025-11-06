@@ -75,8 +75,7 @@ interface OrderItem {
 }
 
 interface CustomerInfo {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email?: string;
   phone: string;
   address: string;
@@ -153,8 +152,7 @@ export default function CheckoutPage() {
   );
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    fullName: "",
     email: "",
     phone: "",
     address: "",
@@ -219,8 +217,7 @@ export default function CheckoutPage() {
 
   const validateShippingForm = () => {
     const errors: Record<string, string> = {};
-    if (!formData.firstName.trim()) errors.firstName = "First name is required";
-    if (!formData.lastName.trim()) errors.lastName = "Last name is required";
+    if (!formData.fullName.trim()) errors.fullName = "Full name is required";
     if (!formData.address.trim()) errors.address = "Address is required";
     if (!formData.phone.trim()) errors.phone = "Phone is required";
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -349,8 +346,7 @@ export default function CheckoutPage() {
       totalQuantity,
       orderInfo: orderItems,
       customerInfo: {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        fullName: formData.fullName,
         ...(currentUser && currentUser.email ? { email: currentUser.email } : {}),
         phone: formData.phone,
         address: formData.address,
@@ -384,8 +380,7 @@ export default function CheckoutPage() {
       setAppliedCoupon(null);
       setPromoCode("");
       setFormData({
-        firstName: "",
-        lastName: "",
+        fullName: "",
         email: "",
         phone: "",
         address: "",
@@ -439,7 +434,7 @@ export default function CheckoutPage() {
         onClose={() => setShowThanksModal(false)}
       />
       
-    <div className="min-h-screen bg-[#FFFFFF] py-4 md:py-8 pb-24 md:pb-8">
+    <div className="min-h-screen bg-[#FFFFFF] py-1 md:py-4 pb-24 md:pb-8">
       <div className="w-full px-4 max-w-6xl mx-auto">
         <CheckoutHeader currentStep={currentStep} />
         {/* Main Grid Wrapped in Form */}

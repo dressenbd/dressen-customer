@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import TopBrands from "@/components/modules/all-product-brand/TopBrands";
 import AdidasCollection from "@/components/modules/all-product-brand/AdidasCollection";
 import DiscountBanner from "@/components/modules/all-product-brand/DiscountBanner";
@@ -16,6 +17,7 @@ import { setProducts } from "@/redux/featured/product/productSlice"; // make sur
 import { Slider } from "@/components/modules/all-product-brand/slider";
 
 export default function Page() {
+  useScrollToTop();
   const dispatch = useAppDispatch();
 
   // Fetch brands

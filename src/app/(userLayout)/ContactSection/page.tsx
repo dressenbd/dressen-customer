@@ -1,10 +1,14 @@
+"use client";
+
 import FAQSection from "@/components/modules/ContactSection/FAQSection";
 import OrdersTable from "@/components/modules/ContactSection/OrdersTable";
 import Sidebar from "@/components/modules/ContactSection/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
-export default function contactpage() {
+export default function ContactPage() {
+    useScrollToTop();
     return (
         <div className="  p-4 md:p-8 lg:p-16">
             <div className="grid grid-cols-4 gap-4">

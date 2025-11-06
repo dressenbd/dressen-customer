@@ -15,6 +15,12 @@ type Slide = {
   href?: string;
 };
 
+// Settings slider image type
+type SliderImage = {
+  image: string;
+  url: string;
+};
+
 const FALLBACK: Slide[] = [
   { 
     _id: "f1", 
@@ -34,18 +40,23 @@ export default function BannerSlider() {
   
   // Show API images if available, otherwise fallback
   const slides: Slide[] = useMemo(() => {
-    if (settings?.sliderImages && settings.sliderImages.length > 0) {
-      // Filter out failed API images
-      const validApiImages = settings.sliderImages.filter(img => !failedApiImages.has(img));
-      
-      if (validApiImages.length > 0) {
-        return validApiImages.map((imageUrl, index) => ({
-          _id: `slide-${index}`,
-          imageUrl,
-          alt: `Banner ${index + 1}`,
-          href: "/product-listing"
-        }));
-      }
+    const sliderImages = settings?.sliderImages;
+    
+    if (sliderImages && sliderImages.length > 0) {
+      return sliderImages
+        .filter((item: SliderImage) => {
+          return item.image && !failedApiImages.has(item.image);
+        })
+        .map((item: SliderImage, index: number) => {
+          const clickUrl = item.url && item.url.trim() !== '' ? item.url : undefined;
+          
+          return {
+            _id: `slide-${index}`,
+            imageUrl: item.image,
+            alt: `Banner ${index + 1}`,
+            href: clickUrl
+          };
+        });
     }
     return FALLBACK;
   }, [settings, failedApiImages]);
@@ -163,7 +174,7 @@ export default function BannerSlider() {
             : "opacity-0";
 
         // Skip rendering if imageUrl is invalid
-        if (!s.imageUrl || s.imageUrl === '"' || s.imageUrl.includes('"')) {
+        if (!s.imageUrl || typeof s.imageUrl !== 'string' || s.imageUrl === '"' || s.imageUrl.includes('"')) {
           return null;
         }
 
@@ -174,13 +185,18 @@ export default function BannerSlider() {
             alt={s.alt || "Banner"}
             fill
             priority={i === 0}
-            className={`object-cover absolute inset-0 transition-opacity duration-500 ${animationClass}`}
+            className={`object-cover absolute inset-0 transition-opacity duration-500 ${animationClass} ${s.href && isActive ? 'cursor-pointer' : ''} ${!isActive ? 'pointer-events-none' : ''}`}
             sizes="(min-width:1280px) 1000px, 100vw"
             unoptimized
             onError={() => {
               // Mark API image as failed, will trigger fallback
-              if (settings && settings.sliderImages && settings.sliderImages.includes(s.imageUrl)) {
+              if (settings?.sliderImages) {
                 setFailedApiImages(prev => new Set(prev).add(s.imageUrl));
+              }
+            }}
+            onClick={() => {
+              if (isActive && s.href) {
+                window.open(s.href, '_blank', 'noopener,noreferrer');
               }
             }}
           />

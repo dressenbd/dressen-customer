@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { CartItem, selectCartTotalItems } from "@/redux/featured/cart/cartSlice";
 import { useAppSelector } from "@/redux/hooks";
 
@@ -22,7 +23,7 @@ export default function CartItems({ cartItems, onQuantityChange, onRemoveItem }:
         
       </div>
       {cartItems.length > 0 ? (
-        <div className="space-y-3 max-h-96 lg:max-h-80 overflow-y-auto">
+        <div className="space-y-3 max-h-96 lg:max-h-120 overflow-y-auto">
           {cartItems.map((item) => (
             <div
               key={item.productId}
@@ -41,9 +42,11 @@ export default function CartItems({ cartItems, onQuantityChange, onRemoveItem }:
                 </div>
               </div>
               <div className="flex-1 min-w-0 w-full sm:w-auto">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {item.productName}
-                </p>
+                <Link href={`/product-details?id=${item.productId}`} className="hover:text-blue-600 hover:underline transition-colors">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {item.productName}
+                  </p>
+                </Link>
                 <p className="text-xs text-gray-600">
                   ৳{item.unitPrice.toFixed(2)} each
                 </p>
@@ -56,7 +59,7 @@ export default function CartItems({ cartItems, onQuantityChange, onRemoveItem }:
                 )}
               </div>
               <div className="flex items-center justify-between w-full sm:w-auto sm:flex-shrink-0">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mr-4">
                   <Button
                     type="button"
                     variant="outline"
@@ -81,7 +84,7 @@ export default function CartItems({ cartItems, onQuantityChange, onRemoveItem }:
                 <div className="flex items-center space-x-3">
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-900">
-                      ৳{item.totalAmount.toFixed(2)}
+                    ৳ {item.totalAmount.toFixed(2)}
                     </p>
                   </div>
                   <Button

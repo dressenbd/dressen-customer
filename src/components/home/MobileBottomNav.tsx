@@ -50,7 +50,7 @@ export default function MobileBottomNav() {
           {items.map((it) =>
             it.href ? (
               <li key={it.key}>
-                <Link href={it.href} className="flex flex-col items-center justify-center py-2 text-secondary">
+                <Link href={it.href} className={`flex font=bold flex-col items-center justify-center py-2 ${it.key === 'home' ? 'text-primary' : 'text-secondary'}`}>
                   {it.icon}
                   <span className="text-[11px] mt-1">{it.label}</span>
                 </Link>

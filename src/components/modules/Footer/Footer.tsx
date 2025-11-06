@@ -52,18 +52,18 @@ const Footer = () => {
             </p>
             {/* Social Icons */}
             <div className="flex items-center gap-3 mt-4">
-              {settings?.contactAndSocial?.facebookUrl && (
-                <a href={settings.contactAndSocial.facebookUrl} target="_blank" rel="noopener noreferrer">
+              {settings?.contactAndSocial?.facebookUrl?.[0] && (
+                <a href={settings.contactAndSocial.facebookUrl[0]} target="_blank" rel="noopener noreferrer">
                   <Image src="/fb.png" alt="Facebook" width={24} height={24} />
                 </a>
               )}
-              {settings?.contactAndSocial?.instagramUrl && (
-                <a href={settings.contactAndSocial.instagramUrl} target="_blank" rel="noopener noreferrer">
+              {settings?.contactAndSocial?.instagramUrl?.[0] && (
+                <a href={settings.contactAndSocial.instagramUrl[0]} target="_blank" rel="noopener noreferrer">
                   <Image src="/insta.png" alt="Instagram" width={24} height={24} />
                 </a>
               )}
-              {settings?.contactAndSocial?.whatsappLink && (
-                <a href={settings.contactAndSocial.whatsappLink} target="_blank" rel="noopener noreferrer">
+              {settings?.contactAndSocial?.whatsappLink?.[0] && (
+                <a href={settings.contactAndSocial.whatsappLink[0]} target="_blank" rel="noopener noreferrer">
                   <Image src="/ld.png" alt="WhatsApp" width={24} height={24} />
                 </a>
               )}

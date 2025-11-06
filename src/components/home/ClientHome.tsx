@@ -10,19 +10,18 @@ import CategoryProductCards from "@/components/home/CategoryProductCards";
 import ProductSixGrid from "@/components/home/ProductSixGrid";
 import MobileBottomNav from "@/components/home/MobileBottomNav";
 import {
-  useGetDiscountedProductsQuery,
   useGetTodaysDealsQuery,
   useGetTopReviewedProductsQuery,
 } from "@/redux/featured/product/productApi";
-import Discount from "../modules/category/Discount";
+// import Discount from "../modules/category/Discount";
 import TopReviewed from "../modules/category/TopReviewed";
 import HomepagePopup from "./HomepagePopup";
 
 export default function ClientHome() {
-  const {data: discounted,
-    isLoading: discountLoading,
-    isError: discountError,
-   } = useGetDiscountedProductsQuery()
+  // const {data: discounted,
+  //   isLoading: discountLoading,
+  //   isError: discountError,
+  //  } = useGetDiscountedProductsQuery()
 
    const {
   data: topReviewed,
@@ -50,7 +49,18 @@ export default function ClientHome() {
         </div>
       </section>
 
-      {/* FEATURED / MORE */}
+      {/* Category / category rails */}
+      <section className="mt-4">
+        
+        <CategoryRail />
+        <div className="mt-3">
+          <CategoryProductCards />
+        </div>
+      </section>
+
+
+      {/* Customer dont want this section */}
+      {/* FEATURED / MORE
       <section className="mt-4">
         <FeatureMoreBar
           left={{ label: "FEATURED", href: "/featured" }}
@@ -60,9 +70,9 @@ export default function ClientHome() {
         <div className="mt-3">
           <CategoryProductCards />
         </div>
-      </section>
+      </section> */}
 
-      {/* ✅ DISCOUNTED PRODUCTS — এখন Discount.tsx ব্যবহার করছি */}
+      {/* ✅ DISCOUNTED PRODUCTS — এখন Discount.tsx ব্যবহার করছি
       <section className="mt-6">
         <FeatureMoreBar
           left={{ label: "DISCOUNTED PRODUCTS", href: "/discounts" }}
@@ -77,7 +87,7 @@ export default function ClientHome() {
             limit={6}
           />
         </div>
-      </section>
+      </section> */}
 
       {/* TODAY'S DEAL */}
       <section className="mt-6">

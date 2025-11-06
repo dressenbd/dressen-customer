@@ -310,6 +310,11 @@ export default function ProductListing() {
         ? [...prev[filterType], value]
         : prev[filterType].filter((item) => item !== value),
     }));
+    
+    // Scroll to top when filter changes
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
  };
 
   const handleSearch = (query: string) => {

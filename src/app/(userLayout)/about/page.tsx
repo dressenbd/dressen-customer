@@ -1,4 +1,5 @@
 // src/app/(userLayout)/about/page.tsx
+
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -68,6 +69,7 @@ function ValueCard({
 }
 
 export default function AboutPage() {
+  
   return (
     <main className="bg-white min-h-screen">
       {/* HERO */}

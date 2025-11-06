@@ -8,8 +8,7 @@ import { selectCurrentUser } from "@/redux/featured/auth/authSlice";
 
 interface ShippingFormProps {
   formData: {
-    firstName: string;
-    lastName: string;
+    fullName: string;
     email: string;
     phone: string;
     address: string;
@@ -35,41 +34,23 @@ export default function ShippingForm({ formData, formErrors, onInputChange }: Sh
         </h2>
       </div>
       <div className="space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <Label htmlFor="firstName" className="text-sm font-medium">
-              First Name
-            </Label>
-            <Input
-              required
-              id="firstName"
-              value={formData.firstName}
-              onChange={onInputChange}
-              className={`mt-1 ${formErrors.firstName ? "border-red-500" : ""}`}
-            />
-            {formErrors.firstName && (
-              <p className="mt-1 text-xs text-red-500">
-                {formErrors.firstName}
-              </p>
-            )}
-          </div>
-          <div>
-            <Label htmlFor="lastName" className="text-sm font-medium">
-              Last Name
-            </Label>
-            <Input
-              required
-              id="lastName"
-              value={formData.lastName}
-              onChange={onInputChange}
-              className={`mt-1 ${formErrors.lastName ? "border-red-500" : ""}`}
-            />
-            {formErrors.lastName && (
-              <p className="mt-1 text-xs text-red-500">
-                {formErrors.lastName}
-              </p>
-            )}
-          </div>
+        <div>
+          <Label htmlFor="fullName" className="text-sm font-medium">
+            Full Name
+          </Label>
+          <Input
+            required
+            id="fullName"
+            value={formData.fullName}
+            onChange={onInputChange}
+            className={`mt-1 ${formErrors.fullName ? "border-red-500" : ""}`}
+            placeholder="Enter your full name"
+          />
+          {formErrors.fullName && (
+            <p className="mt-1 text-xs text-red-500">
+              {formErrors.fullName}
+            </p>
+          )}
         </div>
         {currentUser && (
           <div>
@@ -100,6 +81,7 @@ export default function ShippingForm({ formData, formErrors, onInputChange }: Sh
             required
             id="phone"
             type="tel"
+            placeholder="Enter your phone number"
             value={formData.phone}
             onChange={onInputChange}
             className={`mt-1 ${formErrors.phone ? "border-red-500" : ""}`}
@@ -120,6 +102,7 @@ export default function ShippingForm({ formData, formErrors, onInputChange }: Sh
             value={formData.address}
             onChange={onInputChange}
             className={`mt-1 ${formErrors.address ? "border-red-500" : ""}`}
+            placeholder="Enter your full address"
           />
           {formErrors.address && (
             <p className="mt-1 text-xs text-red-500">

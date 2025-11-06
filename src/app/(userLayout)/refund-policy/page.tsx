@@ -1,6 +1,9 @@
 "use client";
 
+import { useScrollToTop } from "@/hooks/useScrollToTop";
+
 export default function RefundPolicyPage() {
+  useScrollToTop();
   return (
     <div className="min-h-screen bg-accent py-12">
       <div className="max-w-4xl mx-auto px-6">

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -146,6 +147,7 @@ const normalizeProduct = (p: IProduct, categoryName?: string): DealItem => {
 };
 
 export default function DealsMorePage() {
+  useScrollToTop();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(selectCartItems);
   const [currentPage, setCurrentPage] = useState(1);

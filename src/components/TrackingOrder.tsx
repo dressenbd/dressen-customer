@@ -40,8 +40,9 @@ interface OrderData {
     };
   }>;
   customerInfo: {
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
+    fullName?: string;
     email?: string;
     phone: string;
     address: string;
@@ -74,13 +75,21 @@ export default function TrackingOrder() {
     
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/order/track/${trackingInput}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/order`);
       const result = await response.json();
       
-      if (result.success) {
-        setTrackingResult({ success: true, data: result.data });
+      if (result.success && result.data) {
+        const foundOrder = result.data.find((order: OrderData) => 
+          order.trackingNumber === trackingInput.trim()
+        );
+        
+        if (foundOrder) {
+          setTrackingResult({ success: true, data: foundOrder });
+        } else {
+          setTrackingResult({ success: false, error: 'Order not found with this tracking number' });
+        }
       } else {
-        setTrackingResult({ success: false, error: result.message || 'Order not found' });
+        setTrackingResult({ success: false, error: 'Failed to retrieve orders' });
       }
     } catch (error: unknown) {
       const apiError = error as APIError;
@@ -198,7 +207,10 @@ export default function TrackingOrder() {
                           <User size={20} className="text-secondary mt-1" />
                           <div>
                             <span className="text-sm font-semibold text-gray-600 block">Customer</span>
-                            <p className="text-lg font-bold text-gray-900">{trackingResult.data.customerInfo.firstName} {trackingResult.data.customerInfo.lastName}</p>
+                            <p className="text-lg font-bold text-gray-900">
+                              {trackingResult.data.customerInfo.fullName || 
+                               `${trackingResult.data.customerInfo.firstName || ''} ${trackingResult.data.customerInfo.lastName || ''}`.trim()}
+                            </p>
                           </div>
                         </div>
                         

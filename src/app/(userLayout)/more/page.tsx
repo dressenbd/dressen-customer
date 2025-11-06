@@ -20,6 +20,7 @@ import { addToCart, selectCartItems } from "@/redux/featured/cart/cartSlice";
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 import type { RemoteProduct } from '@/types/product';
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 
 
@@ -31,6 +32,7 @@ function formatBDT(n: number) {
 }
 
 export default function FeaturedMorePage() {
+  useScrollToTop();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(selectCartItems);
   const [currentPage, setCurrentPage] = useState(1);

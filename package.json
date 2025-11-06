@@ -31,6 +31,7 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@tailwindcss/oxide": "^4.1.11",
+    "@tanstack/react-query": "^5.90.7",
     "@types/date-fns": "^2.5.3",
     "badge": "^1.0.3",
     "class-variance-authority": "^0.7.1",

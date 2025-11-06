@@ -120,12 +120,12 @@ export default function Footer() {
               
                <li>
                 <Link href="/return-policy" className="hover:text-black transition-colors">
-                  {settings?.returnPolicy?.title || 'Return & Exchange'}
+                   Return Policy & Exchange
                 </Link>
               </li>
               <li>
                 <Link href="/privacy-policy" className="hover:text-black transition-colors">
-                  {settings?.privacyPolicy?.title || 'Privacy Policy'}
+                   Privacy Policy
                 </Link>
               </li>
               <li>

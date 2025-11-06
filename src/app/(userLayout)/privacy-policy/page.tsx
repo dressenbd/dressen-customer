@@ -3,8 +3,10 @@
 import { useGetSettingsQuery } from "@/redux/featured/settings/settingsApi";
 import { Lock, Eye, UserCheck, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 export default function PrivacyPolicyPage() {
+  useScrollToTop();
   const { data: settings, isLoading } = useGetSettingsQuery();
 
   if (isLoading) {

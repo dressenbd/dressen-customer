@@ -13,6 +13,7 @@ import {
   User as UserIcon,
   ChevronDown,
   ChevronRight,
+  Heart,
 } from "lucide-react";
 
 import {
@@ -23,12 +24,15 @@ import { useGetSettingsQuery } from "@/redux/featured/settings/settingsApi";
 import Image from "next/image";
 
 // 🔐 auth + cart selectors & logout
-import { useAppSelector } from "@/redux/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import { signOut } from "next-auth/react";
 
-import { selectCurrentUser } from "@/redux/featured/auth/authSlice";
+import { selectCurrentUser, logoutUser } from "@/redux/featured/auth/authSlice";
 import { useLogoutMutation } from "@/redux/featured/auth/authApi";
 import SmartSearch from "@/components/search/SmartSearch";
 import { selectCartItems } from "@/redux/featured/cart/cartSlice";
+import { useWishlist } from "@/hooks/useWishlist";
+import toast from "react-hot-toast";
 
 
 
@@ -60,6 +64,7 @@ export default function Navbar() {
 
   const currentUser = useAppSelector(selectCurrentUser);
   const [logoutMutation, { isLoading: isLogoutLoading }] = useLogoutMutation();
+  const dispatch = useAppDispatch();
 
   const isLoggedIn = Boolean(currentUser?.id);
 
@@ -68,6 +73,7 @@ export default function Navbar() {
   }, []);
 
   const cartItems = useAppSelector(selectCartItems);
+  const { wishlist } = useWishlist();
   // Fetch categories from API
   const { data } = useGetAllCategoryQuery();
 
@@ -101,14 +107,21 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      const userId = currentUser?.id ?? "";
+      const userId = currentUser?.id;
       if (userId) {
         await logoutMutation(userId).unwrap();
       }
     } catch {
       // Handle error silently
     } finally {
-      router.replace("/auth/login");
+      // Redux state clear
+      dispatch(logoutUser());
+      
+      // NextAuth session clear + redirect
+      await signOut({ callbackUrl: "/auth/login", redirect: false });
+      
+      // Show success toast
+      toast.success("Successfully signed out!");
     }
   };
 
@@ -164,6 +177,19 @@ export default function Navbar() {
               </Link>
 
               <Link
+                href="/wishlist"
+                className="relative inline-flex items-center justify-center h-10 w-10 rounded-md border border-neutral hover:bg-primary hover:text-secondary"
+                aria-label="wishlist"
+              >
+                <Heart size={18} />
+                {isClient && wishlist.length > 0 && (
+                  <span className="absolute -top-2 -right-2 h-5 min-w-5 px-1 rounded-full text-xs bg-secondary text-accent flex items-center justify-center">
+                    {wishlist.length}
+                  </span>
+                )}
+              </Link>
+
+              <Link
                 href="/dashboard/checkout"
                 className="relative inline-flex items-center justify-center h-10 w-10 rounded-md border border-neutral hover:bg-primary hover:text-secondary"
                 aria-label="cart"
@@ -176,27 +202,6 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* {!isLoggedIn ? (
-                <Link
-                  href="/auth/login"
-                  className="text-sm px-3 py-2 rounded-md border border-gray-200 hover:bg-gray-50"
-                >
-                  Login / Register
-                </Link>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    aria-label="Logout"
-                    disabled={isLogoutLoading}
-                    className="inline-flex items-center gap-2 text-sm px-3 py-2 rounded-md border border-gray-200 hover:bg-gray-50 disabled:opacity-60"
-                  >
-                    <LogOut size={16} />
-                    {isLogoutLoading ? "Logging out..." : "Logout"}
-                  </button>
-                </div>
-              )} */}
             </div>
           </div>
         </div>
@@ -244,7 +249,7 @@ export default function Navbar() {
 
                 <Link
                   href="/contact-us"
-                  className="p-2 rounded-lg bg-accent text-secondary hover:bg-accent/90 transition-colors"
+                  className="hidden sm:block p-2 rounded-lg bg-accent text-secondary hover:bg-accent/90 transition-colors"
                   aria-label="Contact"
                 >
                   <Phone size={18} />
@@ -252,7 +257,7 @@ export default function Navbar() {
 
                 <Link
                   href="/dashboard/checkout"
-                  className="relative p-2 rounded-lg bg-accent text-secondary hover:bg-accent/90 transition-colors"
+                  className="hidden sm:block relative p-2 rounded-lg bg-accent text-secondary hover:bg-accent/90 transition-colors"
                   aria-label="Cart"
                 >
                   <ShoppingCart size={18} />
@@ -277,7 +282,7 @@ export default function Navbar() {
                     onClick={handleLogout}
                     aria-label="Logout"
                     disabled={isLogoutLoading}
-                    className="p-2 rounded-lg bg-accent text-secondary hover:bg-accent/90 transition-colors disabled:opacity-60"
+                    className="p-2 rounded-lg bg-accent text-orange-700 hover:bg-accent/90 transition-colors disabled:opacity-60"
                   >
                     <LogOut size={18} />
                   </button>

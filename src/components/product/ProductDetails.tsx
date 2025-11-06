@@ -13,6 +13,7 @@ import {
 import { useGetAllProductsQuery } from '@/redux/featured/product/productApi';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { addToCart, selectCartItems } from '@/redux/featured/cart/cartSlice';
+import { useWishlist } from '@/hooks/useWishlist';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 import { IProduct } from '@/types/product';
@@ -285,8 +286,11 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     }
   }, [hasDynamicSizes, dynamicSizes]);
   const [qty, setQty] = useState(1);
-  const [wishlisted, setWishlisted] = useState(false);
   const [message, setMessage] = useState<null | { type: 'cart' | 'wish'; text: string }>(null);
+  
+  // Wishlist functionality
+  const { toggleWishlist, isInWishlist, isLoading: wishlistLoading } = useWishlist();
+  const wishlisted = product?._id ? isInWishlist(product._id) : false;
 
   const images: ProductImage[] = useMemo(() => {
     if (!product) {
@@ -455,13 +459,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     }, 500);
   };
 
-  const toggleWishlist = () => {
-    setWishlisted((w) => !w);
-    setMessage({
-      type: 'wish',
-      text: !wishlisted ? 'Added to wishlist.' : 'Removed from wishlist.',
-    });
-    setTimeout(() => setMessage(null), 3000);
+  const handleToggleWishlist = () => {
+    if (!product?._id) {
+      toast.error('Invalid product');
+      return;
+    }
+    toggleWishlist(product._id);
   };
 
   const isAddedToCart = useMemo(() => {
@@ -707,9 +710,14 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" className="py-3" onClick={toggleWishlist}>
+              <Button 
+                variant="outline" 
+                className="py-3" 
+                onClick={handleToggleWishlist}
+                disabled={wishlistLoading}
+              >
                 <Heart className={cn('mr-2 h-4 w-4', wishlisted && 'fill-current text-red-500')} />
-                Wishlist
+                {wishlistLoading ? 'Loading...' : wishlisted ? 'In Wishlist' : 'Add to Wishlist'}
               </Button>
               <Button variant="outline" className="py-3" onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
@@ -720,14 +728,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </Button>
             </div>
 
-            <Button
-              variant="outline"
-              onClick={toggleWishlist}
-              className={cn('w-full justify-center', wishlisted && 'border-pink-300 bg-pink-50 text-pink-700')}
-            >
-              <Heart className={cn('mr-2 h-4 w-4', wishlisted && 'fill-current')} />
-              {wishlisted ? 'Added to Wishlist' : 'Add to Wishlist'}
-            </Button>
             {message && (
               <p role="status" className={cn('text-sm pt-1', message.type === 'cart' ? 'text-green-600' : 'text-pink-700')}>
                 {message.text}

@@ -10,8 +10,10 @@ import { selectCartCount } from "@/redux/featured/customer/customerSlice";
 import { selectCurrentUser, logoutUser } from "@/redux/featured/auth/authSlice";
 import { useLogoutMutation } from "@/redux/featured/auth/authApi";
 import toast from "react-hot-toast";
+import { useLoginToast } from "@/hooks/useLoginToast";
 
 export default function MainMenu() {
+  useLoginToast();
   // 🔢 কার্ট কাউন্ট (ডায়নামিক ব্যাজ)
   const cartCount = useAppSelector(selectCartCount);
   // 👤 বর্তমান ইউজার
