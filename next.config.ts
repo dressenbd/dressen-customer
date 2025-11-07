@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // চাইলে keep করুন
-    domains: ["res.cloudinary.com"],
+    // // চাইলে keep করুন
+    // domains: ["res.cloudinary.com"],
     remotePatterns: [
       // https সব ডোমেইন (আপনার আগেরটাই)
       { protocol: "https", hostname: "**" },

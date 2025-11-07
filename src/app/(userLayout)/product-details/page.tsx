@@ -53,6 +53,7 @@ const normalizeProduct = (data: RemoteProduct): IProduct => {
       tags: Array.isArray(data.brandAndCategories?.tags)
         ? data.brandAndCategories.tags
         : [],
+      subcategory: data.brandAndCategories?.subcategory,
     },
     description: {
       name: data.description?.name || "Untitled Product",

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Badge } from "@/components/ui/badge";
 import CategoryProduct from "@/components/modules/category/CategoryProduct";
-import BestSelling from "@/components/modules/category/BestSelling";
+// import BestSelling from "@/components/modules/category/BestSelling";
 import Discount from "@/components/modules/category/Discount";
 import SaveMoreSection from "@/components/modules/category/SaveMoreSection";
 import AppPromo from "@/components/modules/category/AppPromo";
@@ -160,6 +160,18 @@ const isIProduct = (item: unknown): item is IProduct => {
     );
   }
 
+  // Show loading if category data is still loading
+  if (categorySlug && !categoryData) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading category...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show message if category not found
   if (categorySlug && !selectedCategory) {
     return (
@@ -202,7 +214,7 @@ const isIProduct = (item: unknown): item is IProduct => {
         </div>
       </section>
 
-      <BestSelling data={normalized} title={`Best Selling ${subCategoryName || selectedCategory?.name || 'Products'}`} />
+      {/* <BestSelling data={normalized} title={`Best Selling ${subCategoryName || selectedCategory?.name || 'Products'}`} /> */}
       <CategoryProduct data={normalized} title={`${subCategoryName || selectedCategory?.name || ''} Products`} />
       <Discount 
         data={discountedData}

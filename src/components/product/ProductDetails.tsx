@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
-  Heart, Minus, Plus, Shield, Truck, Undo2, Star, ShoppingCart, Copy,
+  Heart, Minus, Plus, Shield, Truck, Undo2, Star, ShoppingCart, Copy, ChevronRight,
 } from 'lucide-react';
 import { useGetAllProductsQuery } from '@/redux/featured/product/productApi';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -72,7 +72,6 @@ type ProductView = {
 
 interface ProductDetailsProps {
   product?: IProduct | null;
-  productId?: string; 
 }
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
@@ -266,7 +265,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   }, [product]);
 
   const hasDynamicSizes = dynamicSizes.length > 0;
-  const showStaticSizes = !hasDynamicSizes;
 
   const [mainIdx, setMainIdx] = useState(0);
   const [color, setColor] = useState<ColorOption | null>(null);
@@ -427,7 +425,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       unitPrice: Number((product?.productInfo?.salePrice === 0 ? product?.productInfo?.price : product?.productInfo?.salePrice) ?? product?.productInfo?.price ?? 0),
       quantity: qty,
       color: availableColors.length > 0 && color ? color.name : 'Default',
-      size: showStaticSizes || hasDynamicSizes ? size : 'One Size',
+      size: hasDynamicSizes ? size : 'One Size',
     };
 
     dispatch(addToCart(cartItem));
@@ -475,8 +473,39 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
 
 
+
+
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8">
+    <div className="max-w-7xl mx-auto px-4 py-2">
+      {/* Breadcrumb */}
+      <nav className="flex items-center text-sm mb-4 bg-gray-50 px-4 py-2 rounded-lg">
+        <Link href="/" className="text-primary hover:text-primary/80 font-medium transition-colors">Home</Link>
+        <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+        {product?.brandAndCategories?.categories?.[0] && (
+          <>
+            <Link 
+              href={`/category?slug=${encodeURIComponent((product.brandAndCategories.categories[0] as any).slug || product.brandAndCategories.categories[0].name.toLowerCase().replace(/\s+/g, '-'))}`} 
+              className="text-primary hover:text-primary/80 font-medium transition-colors"
+            >
+              {product.brandAndCategories.categories[0].name}
+            </Link>
+            <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+          </>
+        )}
+        {product?.brandAndCategories?.subcategory && product?.brandAndCategories?.categories?.[0] && (
+          <>
+            <Link 
+              href={`/category?slug=${encodeURIComponent((product.brandAndCategories.categories[0] as any).slug || product.brandAndCategories.categories[0].name.toLowerCase().replace(/\s+/g, '-'))}&sub=${encodeURIComponent(product.brandAndCategories.subcategory)}`}
+              className="text-primary hover:text-primary/80 font-medium transition-colors"
+            >
+              {product.brandAndCategories.subcategory}
+            </Link>
+            <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+          </>
+        )}
+        <span className="text-gray-700 font-medium truncate max-w-[200px]">{productView.title}</span>
+      </nav>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* LEFT: media */}
         <div>
@@ -627,40 +656,25 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             </div>
           )}
 
-          {/* Size Picker */}
-          {(showStaticSizes || hasDynamicSizes) && (
+          {/* Size Picker - only show if sizes are available */}
+          {hasDynamicSizes && (
             <div className="mt-6">
               <p className="text-sm font-medium mb-2">Size: {String(size).toUpperCase()}</p>
               <div className="flex gap-2 flex-wrap">
-                {hasDynamicSizes
-                  ? dynamicSizes.map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setSize(s)}
-                        className={cn(
-                          'px-4 py-2 border rounded-lg text-sm font-medium transition-all',
-                          s === size
-                            ? 'border-primary bg-primary text-secondary'
-                            : 'border-gray-300 hover:border-gray-400'
-                        )}
-                      >
-                        {String(s).toUpperCase()}
-                      </button>
-                    ))
-                  : (['XS', 'S', 'M', 'L', 'XL', 'XXL'] as SizeOption[]).map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setSize(s)}
-                        className={cn(
-                          'px-4 py-2 border rounded-lg text-sm font-medium transition-all',
-                          s === size
-                            ? 'border-primary bg-primary text-secondary'
-                            : 'border-gray-300 hover:border-gray-400'
-                        )}
-                      >
-                        {s}
-                      </button>
-                    ))}
+                {dynamicSizes.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSize(s)}
+                    className={cn(
+                      'px-4 py-2 border rounded-lg text-sm font-medium transition-all',
+                      s === size
+                        ? 'border-primary bg-primary text-secondary'
+                        : 'border-gray-300 hover:border-gray-400'
+                    )}
+                  >
+                    {String(s).toUpperCase()}
+                  </button>
+                ))}
               </div>
             </div>
           )}

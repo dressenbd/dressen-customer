@@ -40,8 +40,9 @@ export default function CategoryProduct({ data = [], title = "New Products" }: P
   const [activeCategory, setActiveCategory] = useState("All");
 
   const filtered = useMemo(() => {
-    if (activeCategory === "All") return items;
-    return items.filter((p) => p.categories?.includes(activeCategory));
+    const filteredItems = activeCategory === "All" ? items : items.filter((p) => p.categories?.includes(activeCategory));
+    // Limit to 15 products
+    return filteredItems.slice(0, 15);
   }, [items, activeCategory]);
 
   return (
@@ -51,18 +52,33 @@ export default function CategoryProduct({ data = [], title = "New Products" }: P
         <h2 className="text-2xl font-bold md:text-3xl">{title}</h2>
         <div className="flex flex-wrap gap-2 md:gap-3">
           {categoryList.map((cat) => (
-            <Button
-              key={cat}
-              variant={activeCategory === cat ? "default" : "outline"}
-              className={`rounded-full px-4 text-xs md:px-5 md:text-sm ${
-                activeCategory === cat
-                  ? "bg-primary text-[#2e2e2e] hover:bg-primary/60"
-                  : "border bg-transparent text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => setActiveCategory(cat)}
-            >
-              {cat}
-            </Button>
+            cat === "All" ? (
+              <Link key={cat} href="/product-listing">
+                <Button
+                  variant={activeCategory === cat ? "default" : "outline"}
+                  className={`rounded-full px-4 text-xs md:px-5 md:text-sm ${
+                    activeCategory === cat
+                      ? "bg-primary text-[#2e2e2e] hover:bg-primary/60"
+                      : "border bg-transparent text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {cat}
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                key={cat}
+                variant={activeCategory === cat ? "default" : "outline"}
+                className={`rounded-full px-4 text-xs md:px-5 md:text-sm ${
+                  activeCategory === cat
+                    ? "bg-primary text-[#2e2e2e] hover:bg-primary/60"
+                    : "border bg-transparent text-gray-700 hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat}
+              </Button>
+            )
           ))}
         </div>
       </div>

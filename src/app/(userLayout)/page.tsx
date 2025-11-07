@@ -2,6 +2,7 @@
 
 import type { Metadata } from "next";
 import ClientHome from "@/components/home/ClientHome";
+import FacebookMessenger from "@/components/shared/FacebookMessenger";
 
 export const metadata: Metadata = {
   title: "Dressen - Best Deals | Home",
@@ -10,5 +11,10 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   
-  return <ClientHome />;
+  return (
+    <>
+      <ClientHome />
+      <FacebookMessenger />
+    </>
+  );
 }

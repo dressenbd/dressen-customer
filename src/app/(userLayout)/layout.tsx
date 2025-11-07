@@ -3,7 +3,7 @@
 import Footer from "@/components/footer/footer";
 import Navbar from "@/components/modules/Navbar/Navbar";
 import MobileBottomNav from "@/components/home/MobileBottomNav";
-import FacebookMessenger from "@/components/shared/FacebookMessenger";
+
 
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -15,7 +15,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </div>
       <Footer />
-      <FacebookMessenger />
+
       <MobileBottomNav />
     </div>
   );
