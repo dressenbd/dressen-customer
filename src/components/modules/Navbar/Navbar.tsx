@@ -14,6 +14,13 @@ import {
   ChevronDown,
   ChevronRight,
   Heart,
+  X,
+  Home,
+  Info,
+  Package,
+  Shield,
+  RotateCcw,
+  Grid3X3,
 } from "lucide-react";
 
 import {
@@ -34,8 +41,6 @@ import { selectCartItems } from "@/redux/featured/cart/cartSlice";
 import { useWishlist } from "@/hooks/useWishlist";
 import toast from "react-hot-toast";
 
-
-
 // ----- safe helpers -----
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === "object";
@@ -48,16 +53,14 @@ function getStr(o: unknown, k: string): string | undefined {
   return typeof v === "string" ? v : undefined;
 }
 
-
-
-
-
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
   const [isClient, setIsClient] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set()
+  );
   const { data: settings } = useGetSettingsQuery();
 
   const router = useRouter();
@@ -87,14 +90,21 @@ export default function Navbar() {
       const label = String(
         getStr(c, "name") ?? getStr(c, "label") ?? "Category"
       );
-      const subCategories = Array.isArray(c.subCategories) ? c.subCategories : (Array.isArray(c.children) ? c.children.map(child => getStr(child, "name") ?? getStr(child, "label") ?? "Subcategory") : []);
+      const subCategories = Array.isArray(c.subCategories)
+        ? c.subCategories
+        : Array.isArray(c.children)
+        ? c.children.map(
+            (child) =>
+              getStr(child, "name") ?? getStr(child, "label") ?? "Subcategory"
+          )
+        : [];
 
       return { id, slug, label, subCategories };
     });
   }, [data]);
 
   const toggleCategory = (categoryId: string) => {
-    setExpandedCategories(prev => {
+    setExpandedCategories((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(categoryId)) {
         newSet.delete(categoryId);
@@ -116,10 +126,10 @@ export default function Navbar() {
     } finally {
       // Redux state clear
       dispatch(logoutUser());
-      
+
       // NextAuth session clear + redirect
       await signOut({ callbackUrl: "/auth/login", redirect: false });
-      
+
       // Show success toast
       toast.success("Successfully signed out!");
     }
@@ -127,6 +137,175 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Slide Menu */}
+      <div
+        className={`fixed top-0 left-0 h-full min-w-72 max-w-72 bg-white/98 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200">
+            <span className="font-bold text-xl text-primary">Menu</span>
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Close menu"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <nav className="space-y-1">
+              {/* Home Link */}
+              <Link
+                href="/"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Home size={20} />
+                <span>Home</span>
+              </Link>
+
+              {/* All Products Link */}
+              <Link
+                href="/product-listing"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Grid3X3 size={20} />
+                <span>All Products</span>
+              </Link>
+
+              {/* Categories Section */}
+              <div className="space-y-1">
+                {categories.map((category) => (
+                  <div key={category.id}>
+                    <div className="flex items-center justify-between py-2 px-3 hover:bg-gray-100 rounded transition-colors">
+                      <Link
+                        href={`/category?slug=${encodeURIComponent(
+                          category.slug ?? category.id
+                        )}`}
+                        className="flex-1 text-gray-700"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {category.label}
+                      </Link>
+                      {category.subCategories &&
+                        category.subCategories.length > 0 && (
+                          <button
+                            onClick={() => toggleCategory(category.id)}
+                            className="p-1 hover:bg-gray-200 rounded"
+                            aria-label={`Toggle ${category.label} subcategories`}
+                          >
+                            {expandedCategories.has(category.id) ? (
+                              <ChevronDown
+                                size={16}
+                                className="text-gray-600"
+                              />
+                            ) : (
+                              <ChevronRight
+                                size={16}
+                                className="text-gray-600"
+                              />
+                            )}
+                          </button>
+                        )}
+                    </div>
+                    {category.subCategories &&
+                      category.subCategories.length > 0 &&
+                      expandedCategories.has(category.id) && (
+                        <div className="ml-4 space-y-1">
+                          {category.subCategories.map((subCat, index) => (
+                            <Link
+                              key={`${subCat}-${index}`}
+                              href={`/category?slug=${encodeURIComponent(
+                                category.slug ?? category.id
+                              )}&sub=${encodeURIComponent(subCat)}`}
+                              className="block py-1.5 px-3 text-sm hover:bg-gray-100 rounded transition-colors text-gray-600"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              {subCat}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 my-4" />
+
+              {/* Other Navigation Links */}
+              <Link
+                href="/tracking-order"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Package size={20} />
+                <span>Track Order</span>
+              </Link>
+
+              <Link
+                href="/wishlist"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Heart size={20} />
+                <span>Wishlist</span>
+              </Link>
+
+              <Link
+                href="/about"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Info size={20} />
+                <span>About Us</span>
+              </Link>
+
+              <Link
+                href="/contact-us"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Phone size={20} />
+                <span>Contact Us</span>
+              </Link>
+
+              <Link
+                href="/privacy-policy"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Shield size={20} />
+                <span>Privacy Policy</span>
+              </Link>
+
+              <Link
+                href="/return-policy"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <RotateCcw size={20} />
+                <span>Return & Refund</span>
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </div>
+
       {/* ===== Desktop/Large Screen ===== */}
       <div className="hidden lg:block w-full bg-accent border-b border-neutral shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 w-full md:px-6 lg:px-36">
@@ -145,7 +324,7 @@ export default function Navbar() {
                     width={120}
                     height={40}
                     className="h-10"
-                    style={{ width: 'auto' }}
+                    style={{ width: "auto" }}
                   />
                 ) : (
                   <span className="font-extrabold text-3xl text-primary">
@@ -201,7 +380,6 @@ export default function Navbar() {
                   </span>
                 )}
               </Link>
-
             </div>
           </div>
         </div>
@@ -231,9 +409,7 @@ export default function Navbar() {
                       className="h-8 w-auto"
                     />
                   ) : ( */}
-                    <span className="font-bold text-xl text-accent">
-                      Dressen
-                    </span>
+                  <span className="font-bold text-xl text-accent">Dressen</span>
                   {/* )} */}
                 </Link>
               </div>
@@ -317,62 +493,6 @@ export default function Navbar() {
               </div>
 
               {/* ডানপাশে আলাদা বোতাম লাগবে না—SmartSearch নিজেই সার্চ করতে পারে */}
-            </div>
-          )}
-
-          {/* Categories Menu */}
-          {isMenuOpen && !isSearchActive && (
-            <div className="mt-3 bg-accent/10 rounded-lg p-3">
-              <nav className="space-y-2">
-                <Link
-                  href="/product-listing"
-                  className="block py-2 px-3 hover:bg-accent/10 rounded transition-colors text-black"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  All Categories
-                </Link>
-
-                {categories.map((category) => (
-                  <div key={category.id}>
-                    <div className="flex items-center justify-between py-2 px-3 hover:bg-accent/10 rounded transition-colors">
-                      <Link
-                        href={`/category?slug=${encodeURIComponent(category.slug ?? category.id)}`}
-                        className="flex-1 text-black"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {category.label}
-                      </Link>
-                      {category.subCategories && category.subCategories.length > 0 && (
-                        <button
-                          onClick={() => toggleCategory(category.id)}
-                          className="p-3 hover:bg-accent/20 rounded min-w-[100px] min-h-[44px] flex items-center justify-center"
-                          aria-label={`Toggle ${category.label} subcategories`}
-                        >
-                          {expandedCategories.has(category.id) ? (
-                            <ChevronDown size={20} className="text-black" />
-                          ) : (
-                            <ChevronRight size={20} className="text-black" />
-                          )}
-                        </button>
-                      )}
-                    </div>
-                    {category.subCategories && category.subCategories.length > 0 && expandedCategories.has(category.id) && (
-                      <div className="ml-4 space-y-1">
-                        {category.subCategories.map((subCat, index) => (
-                          <Link
-                            key={`${subCat}-${index}`}
-                            href={`/category?slug=${encodeURIComponent(category.slug ?? category.id)}&sub=${encodeURIComponent(subCat)}`}
-                            className="block py-1.5 px-3 text-sm hover:bg-accent/10 rounded transition-colors text-black"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            {subCat}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </nav>
             </div>
           )}
         </div>
