@@ -5,8 +5,8 @@ import CategorySidebar from "@/components/home/CategorySidebar";
 import BannerSlider from "@/components/home/BannerSlider";
 import FloatingEdgeBar from "@/components/home/FloatingEdgeBar";
 import FeatureMoreBar from "@/components/home/FeatureMoreBar";
-import CategoryRail from "@/components/home/CategoryRail";
-import CategoryProductCards from "@/components/home/CategoryProductCards";
+import PromoCategoryRail from "@/components/home/PromoCategoryRail";
+import PromoCategoryProducts from "@/components/home/PromoCategoryProducts";
 import ProductSixGrid from "@/components/home/ProductSixGrid";
 import MobileBottomNav from "@/components/home/MobileBottomNav";
 import {
@@ -16,8 +16,10 @@ import {
 // import Discount from "../modules/category/Discount";
 import TopReviewed from "../modules/category/TopReviewed";
 import HomepagePopup from "./HomepagePopup";
+import { useState } from "react";
 
 export default function ClientHome() {
+  const [selectedPromoCategoryId, setSelectedPromoCategoryId] = useState<string | null>(null);
   // const {data: discounted,
   //   isLoading: discountLoading,
   //   isError: discountError,
@@ -49,12 +51,11 @@ export default function ClientHome() {
         </div>
       </section>
 
-      {/* Category / category rails */}
-      <section className="mt-4">
-        
-        <CategoryRail />
+      {/* Promotional Category / promo rails */}
+      <section className="container mx-auto px-3 md:px-4 xl:px-6 mt-4">
+        <PromoCategoryRail onSelectCategory={setSelectedPromoCategoryId} />
         <div className="mt-3">
-          <CategoryProductCards />
+          <PromoCategoryProducts selectedPromoCategoryId={selectedPromoCategoryId} />
         </div>
       </section>
 
