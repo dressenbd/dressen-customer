@@ -53,6 +53,7 @@ export interface ISettings {
   sliderImages: SliderImage[];
   deliveryCharge: number;
   logo?: string;
+  facebookPixelId?: string;
   createdAt: string;
   updatedAt: string;
   __v: number;

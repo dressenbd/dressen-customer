@@ -17,6 +17,7 @@ import { useWishlist } from '@/hooks/useWishlist';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 import { IProduct } from '@/types/product';
+import { trackViewContent } from '@/utils/fbPixel';
 
 // ---------- helpers ----------
 const normalizeText = (v: unknown): string =>
@@ -283,6 +284,13 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       setSize(dynamicSizes[0]);
     }
   }, [hasDynamicSizes, dynamicSizes]);
+
+  // Track Facebook Pixel ViewContent event when product loads
+  useEffect(() => {
+    if (product?._id) {
+      trackViewContent(product._id, 'product');
+    }
+  }, [product?._id]);
   const [qty, setQty] = useState(1);
   const [message, setMessage] = useState<null | { type: 'cart' | 'wish'; text: string }>(null);
   

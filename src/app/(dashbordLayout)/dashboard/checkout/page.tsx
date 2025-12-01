@@ -15,6 +15,7 @@ import { selectCurrentUser } from "@/redux/featured/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { trackPurchase, trackInitiateCheckout } from "@/utils/fbPixel";
 
 // Components
 import CheckoutHeader from "@/components/checkout/CheckoutHeader";
@@ -375,6 +376,10 @@ export default function CheckoutPage() {
     try {
       setCreateOrderLoading(true);
       const response = await createOrder(finalOrder as any).unwrap();
+      
+      // Track Facebook Pixel Purchase event
+      trackPurchase(finalTotal);
+      
       clearCarts();
       setCurrentStep(1);
       setAppliedCoupon(null);
@@ -416,7 +421,11 @@ export default function CheckoutPage() {
       if (validateShippingForm()) setCurrentStep(3);
     } else if (currentStep === 3) {
       // Payment method validation
-      if (validatePaymentForm()) setCurrentStep(4);
+      if (validatePaymentForm()) {
+        // Track Facebook Pixel InitiateCheckout event
+        trackInitiateCheckout(finalTotal);
+        setCurrentStep(4);
+      }
     } else if (currentStep === 4) {
       // Final review and place order
       handlePlaceOrder();

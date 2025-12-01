@@ -1,6 +1,7 @@
 // redux/featured/cart/cartSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@/redux/store';
+import { trackAddToCart } from '@/utils/fbPixel';
 
 export interface CartItem {
   productId: string;
@@ -57,6 +58,9 @@ const cartSlice = createSlice({
       const totals = calculateTotals(state.items);
       state.totalItems = totals.totalItems;
       state.totalAmount = totals.totalAmount;
+
+      // Track Facebook Pixel AddToCart event
+      trackAddToCart(productId, quantity * unitPrice);
     },
 
     removeFromCart: (state, action: PayloadAction<string>) => {
